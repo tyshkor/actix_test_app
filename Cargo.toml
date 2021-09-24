@@ -1,0 +1,20 @@
+[package]
+name = "actix_test_app"
+version = "0.1.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+envy = "0.4.2"
+dotenv = { version="0.15.0",git="https://github.com/dotenv-rs/dotenv" }
+actix-web = "3"
+actix-rt = "2.2"
+serde = "*"
+serde_json = "1"
+chrono = { version = "0.4", features = ["serde", "rustc-serialize"] }
+
+[dependencies.mongodb]
+version = "2.0.0"
+default-features = false
+features = ["sync"]

@@ -1,0 +1,53 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Launch",
+            "program": "${workspaceFolder}/<your program>",
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'actix_test_app'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=actix_test_app",
+                    "--package=actix_test_app"
+                ],
+                "filter": {
+                    "name": "actix_test_app",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'actix_test_app'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=actix_test_app",
+                    "--package=actix_test_app"
+                ],
+                "filter": {
+                    "name": "actix_test_app",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
