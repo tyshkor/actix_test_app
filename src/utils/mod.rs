@@ -1,8 +1,10 @@
 use serde_json::value::Value;
-use crate::errors::InvalidDateError;
-use crate::models::{Tree, TreeValue};
 use chrono::{DateTime, NaiveDateTime, NaiveDate, NaiveTime, FixedOffset};
 
+use crate::{
+    errors::InvalidDateError,
+    models::{Tree, TreeValue}
+};
 
 pub fn build_tree(serde_json_value: Value) -> (Tree, Vec<InvalidDateError>) {
 
@@ -15,45 +17,40 @@ pub fn build_tree(serde_json_value: Value) -> (Tree, Vec<InvalidDateError>) {
         },
         Value::Bool(bool) => {
             tree.type_name = "boolean".to_string();
-            tree.value = TreeValue::boolean(bool);
+            tree.value = TreeValue::Boolean(bool);
         },
         Value::Number(number) => {
             if number.is_i64() {
                 tree.type_name = "integer".to_string();
-                tree.value = TreeValue::integer(number.as_i64().unwrap());
+                tree.value = TreeValue::Integer(number.as_i64().unwrap());
+
             } else if number.is_f64(){
                 tree.type_name = "float".to_string();
-                tree.value = TreeValue::float(number.as_f64().unwrap());
+                tree.value = TreeValue::Float(number.as_f64().unwrap());
+
             } else {
                 tree.type_name = "number".to_string();
             }
         },
         Value::String(string) => {
-            tree.value = TreeValue::string(string);
+            tree.value = TreeValue::String(string);
         },
         Value::Array(vector) => {
             tree.type_name = "array".to_string();
             
             for i in 0..vector.len() {
 
-                // tokio::std::thread::spawn(move || {
-                    let item = vector[i].clone();
-                    let (mut tree_item, error_list) = build_tree(item);
-                    tree_item.field = i.to_string();
-                    let tree_item_field = tree_item.field.clone();
-                    tree.children.push(Box::new(tree_item));
-                    
-                    
-                    for mut error_item in error_list {
-                        if &error_item.path != "" {
-                            error_item.path = tree_item_field.clone() + &".".to_string() + &error_item.path;
-                        } else {
-                            error_item.path = tree_item_field.clone()
-                        }
-                        error_vec.push(error_item)
-                    }
+                let item = vector[i].clone();
 
-                // });
+                let (mut tree_item, error_list) = build_tree(item);
+                tree_item.field = i.to_string();
+                let tree_item_field = tree_item.field.clone();
+                tree.children.push(Box::new(tree_item));
+                    
+                for mut error_item in error_list {
+                    error_item.form_error_path(tree_item_field.clone());
+                    error_vec.push(error_item)
+                }
             }
         },
         Value::Object(obj) => {
@@ -67,11 +64,7 @@ pub fn build_tree(serde_json_value: Value) -> (Tree, Vec<InvalidDateError>) {
                             children.push(Box::new(res));
                         },
                         Err(mut err) => {
-                            if &err.path != "" {
-                                err.path = key + &".".to_string() + &err.path;
-                            } else {
-                                err.path = key
-                            }
+                            err.form_error_path(key);
                             error_vec.push(err);
                         }
                     };
@@ -80,13 +73,9 @@ pub fn build_tree(serde_json_value: Value) -> (Tree, Vec<InvalidDateError>) {
                     tree_item.field = key;
                     let tree_item_field = tree_item.field.clone();
                     children.push(Box::new(tree_item));
+
                     for mut error_item in error_list {
-                        if &error_item.path != "" {
-                            error_item.path = tree_item_field.clone() + &".".to_string() + &error_item.path;
-                        } else {
-                            error_item.path = tree_item_field.clone()
-                        }
-                        
+                        error_item.form_error_path(tree_item_field.clone());
                         error_vec.push(error_item)
                     }
                 }
@@ -136,7 +125,7 @@ fn build_date_tree_element(value: Value) -> Result<Tree, InvalidDateError> {
             let mut tree = Tree::default();
 
             tree.type_name = "date".to_string();
-            tree.value = TreeValue::date(date_time);
+            tree.value = TreeValue::Date(date_time);
 
             Ok(tree)
         },

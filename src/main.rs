@@ -7,10 +7,10 @@ mod config;
 
 
 use actix_web::{web::post, web, error, App, HttpResponse, HttpServer};
-use crate::config::Config;
 
 use crate::{
-    handlers::index,
+    config::Config,
+    handlers::post_json_to_tree,
     db::DB,
 };
 
@@ -36,7 +36,7 @@ async fn main() -> std::io::Result<()> {
                       )
                       .into()
         }))
-        .route("/", post().to(index))
+        .route("/", post().to(post_json_to_tree))
     })
     .bind("127.0.0.1:8080")?
     .run()

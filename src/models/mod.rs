@@ -1,14 +1,14 @@
 use serde::{Deserialize, Serialize};
-use chrono::{DateTime, NaiveDateTime, NaiveDate, NaiveTime, FixedOffset};
+use chrono::{DateTime, FixedOffset};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 #[serde(untagged)]
 pub enum TreeValue {
-    string(String),
-    date(DateTime<chrono::FixedOffset>),
-    boolean(bool),
-    integer(i64),
-    float(f64),
+    String(String),
+    Date(DateTime<FixedOffset>),
+    Boolean(bool),
+    Integer(i64),
+    Float(f64),
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -26,7 +26,7 @@ impl Tree {
         Tree {
             field: "".to_string(),
             type_name: "".to_string(),
-            value: TreeValue::string("".to_string()),
+            value: TreeValue::String("".to_string()),
             children: vec![],
         }
     }

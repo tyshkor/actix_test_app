@@ -1,5 +1,5 @@
-use mongodb::bson::{doc};
 use mongodb::{error::Error, results::InsertOneResult, sync::{Client, Collection}};
+
 use crate::models::Tree;
 
 #[derive(Clone)]

@@ -1,19 +1,13 @@
-use actix_web::{web, Result, HttpResponse, Responder};
+use actix_web::{web::{Data, Json}, Result, HttpResponse, Responder};
 use serde_json::value::Value;
 
-use mongodb::{bson::doc,sync::Client,results::{
-    InsertOneResult,
-},
+use crate::{
+    utils::build_tree,
+    db::DB,
+    errors::{InvalidDateErrorList, DbError, AppError}
 };
 
-use crate::utils::build_tree;
-use crate::models::Tree;
-use crate::db::DB;
-use actix_web::error::ResponseError;
-
-use crate::errors::{InvalidDateErrorList, DbError, AppError};
-
-pub async fn index(db: web::Data<DB>,info: web::Json<Value>) -> Result<impl Responder, AppError> {
+pub async fn post_json_to_tree(db: Data<DB>,info: Json<Value>) -> Result<impl Responder, AppError> {
 
     let serde_json_value = info.into_inner();
 

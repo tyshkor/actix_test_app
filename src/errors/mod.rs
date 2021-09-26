@@ -1,5 +1,6 @@
-use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Error, Formatter};
+
+use serde::{Deserialize, Serialize};
 use actix_web::{HttpResponse, http::StatusCode, error::ResponseError};
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -50,6 +51,15 @@ impl InvalidDateError {
         InvalidDateError {
             msg: "Invalid date".to_string(),
             path: "".to_string(),
+        }
+    }
+
+    pub fn form_error_path(&mut self, prefix: String) {
+
+        if self.path != "" {
+            self.path = prefix + &".".to_string() + &self.path;
+        } else {
+            self.path = prefix
         }
     }
 }
